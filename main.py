@@ -1,3 +1,7 @@
-my privtae test
-my next test
-my test 
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Hello World"}
