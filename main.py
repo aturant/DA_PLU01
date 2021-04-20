@@ -41,16 +41,19 @@ def root(response: Response,
          password: str,
          password_hash: str):
 	
-	response.status_code = 401
+	try:
+		if len(password)==0 or len(password_hash)==0:
+			raise KeyError
 
-    if (len(password)+len(password_hash))>0:
-
-        m = sha512()
+		m = sha512()
         m.update(password.encode('utf-8'))
         password_test_hash = str(m.hexdigest()).encode('utf-8')
 
         if password_test_hash in str(password_hash).encode('utf-8'):
             response.status_code = 204
+	except:
+		response.status_code = 401
+
 
     return {
         "password": password,
