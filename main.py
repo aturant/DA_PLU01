@@ -50,15 +50,17 @@ def root(
 		m.update(password.encode('utf-8'))
 		password_test_hash = str(m.hexdigest()).encode('utf-8')
 
-		if (password_test_hash in str(password_hash).encode('utf-8')):
-			
-			response.status_code = 204
-		else:
+		if not(password_test_hash in str(password_hash).encode('utf-8')):
 			raise KeyError
 
 	except:
 		response.status_code = 401
 
+	else:
+		response.status_code = 204
+	
+	finally:
+		return None
 
 @app.post('/register')
 def root(in_item: InItem):
