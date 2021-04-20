@@ -64,7 +64,9 @@ def root(
 
 @app.post('/register', status_code = 201)
 def root(in_item: InItem):
-
+	in_item.name.strip()
+	in_item.surname.strip()
+	
     app.client_id += 1
     in_item.id = app.client_id
     offset = len(in_item.name) + len(in_item.surname)
