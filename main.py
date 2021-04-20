@@ -9,10 +9,14 @@ def root():
 
 
 @app.get("/method")
+@app.put("/method")
+@app.options("/method")
 def root(request: Request, response: Response):
     if request.method in ['GET', 'PUT', 'OPTIONS', 'DELETE']:
         response.status_code = 200
+        return {"method": request.method}
+
     elif request.method == 'POST':
         response.status_code = 201
-
-    return {"method": request.method}
+        return {"method": request.method}
+    
