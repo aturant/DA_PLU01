@@ -11,6 +11,8 @@ def root():
 @app.get("/method")
 @app.put("/method")
 @app.options("/method")
+@app.delete("/method")
+@app.post("/method")
 def root(request: Request, response: Response):
     if request.method in ['GET', 'PUT', 'OPTIONS', 'DELETE']:
         response.status_code = 200
