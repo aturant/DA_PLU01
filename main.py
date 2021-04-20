@@ -69,7 +69,7 @@ def root(in_item: InItem):
 
 	app.client_id += 1
 	in_item.id = app.client_id
-	offset = len(in_item.name) + len(in_item.surname) +1
+	offset = len(in_item.name) + len(in_item.surname)
 	vaccination_date=date.today() + timedelta(days=offset)
 
 
