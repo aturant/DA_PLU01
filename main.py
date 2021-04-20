@@ -35,7 +35,7 @@ def root(response: Response,
 			response.status_code=401
 
 	except NameError:
-		response.status_code=666
+		response.status_code=667
 	return {
 			"password": password, 
 			"password_hash":password_hash, 
