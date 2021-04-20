@@ -46,11 +46,11 @@ def root(response: Response,
 			raise KeyError
 
 		m = sha512()
-        m.update(password.encode('utf-8'))
-        password_test_hash = str(m.hexdigest()).encode('utf-8')
+		m.update(password.encode('utf-8'))
+		password_test_hash = str(m.hexdigest()).encode('utf-8')
 
-        if password_test_hash in str(password_hash).encode('utf-8'):
-            response.status_code = 204
+		if password_test_hash in str(password_hash).encode('utf-8'):
+			response.status_code = 204
 	except:
 		response.status_code = 401
 
