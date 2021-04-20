@@ -1,7 +1,24 @@
 from fastapi import FastAPI, Request, Response
 from hashlib import sha512
+from datetime import timedelta, date
+
+from typing import Optional
+from pydantic import BaseModel
+import json
+
+from pydantic import BaseModel
+
+
+class InItem(BaseModel):
+    id: Optional[int]
+    name: str
+    surname: str
+    register_date: Optional[str] = None
+    vaccination_date: Optional[str] = None
+
 
 app = FastAPI()
+app.client_id = 0
 
 
 @app.get("/")
@@ -14,29 +31,43 @@ def root():
 @app.options("/method")
 @app.delete("/method")
 @app.post("/method", status_code=201)
-
 def root(request: Request, response: Response):
-	return {"method": request.method}
+    return {"method": request.method}
+
 
 @app.get("/auth")
 def root(response: Response,
-	password: str,
-	password_hash:str):
-	
-	try:
+         password: str,
+         password_hash: str):
 
-		m = sha512()
-		m.update(password.encode('utf-8'))
-		password_test_hash=str(m.hexdigest()).encode('utf-8')
+    try:
 
-		if password_test_hash in str(password_hash).encode('utf-8'):
-			response.status_code=204
-		else:
-			response.status_code=401
+        m = sha512()
+        m.update(password.encode('utf-8'))
+        password_test_hash = str(m.hexdigest()).encode('utf-8')
 
-	except NameError:
-		response.status_code=667
-	return {
-			"password": password, 
-			"password_hash":password_hash, 
-			"new_hash":password_test_hash}
+        if password_test_hash in str(password_hash).encode('utf-8'):
+            response.status_code = 204
+        else:
+            response.status_code = 401
+
+    except NameError:
+        response.status_code = 667
+    return {
+        "password": password,
+        "password_hash": password_hash,
+        "new_hash": password_test_hash}
+
+
+@app.post('/register')
+def root(in_item: InItem):
+
+    app.client_id += 1
+    in_item.id = app.client_id
+    offset = len(in_item.name) + len(in_item.surname)
+    vaccination_date=date.today() + timedelta(days=offset)
+
+
+    in_item.register_date = date.today().strftime('%Y-%m-%d')
+    in_item.vaccination_date = vaccination_date.strftime('%Y-%m-%d')
+    return in_item
