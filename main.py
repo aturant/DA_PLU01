@@ -37,9 +37,10 @@ def root(request: Request, response: Response):
 
 
 @app.get("/auth")
-def root(response: Response,
-         password: str,
-         password_hash: str):
+def root(
+	response: Response,
+	password: str,
+	password_hash: str):
 	
 	try:
 		if len(password)==0 or len(password_hash)==0:
@@ -55,10 +56,10 @@ def root(response: Response,
 		response.status_code = 401
 
 
-    return {
-        "password": password,
-        "password_hash": password_hash,
-        "new_hash": password_test_hash}
+	return {
+		"password": password,
+		"password_hash": password_hash,
+		"new_hash": password_test_hash}
 
 
 @app.post('/register')
