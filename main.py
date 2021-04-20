@@ -70,14 +70,14 @@ def root(in_item: InItem):
 	app.client_id += 1
 	in_item.id = app.client_id
 	offset = len(in_item.name) + len(in_item.surname) +1
-    vaccination_date=date.today() + timedelta(days=offset)
+	vaccination_date=date.today() + timedelta(days=offset)
 
 
-    in_item.register_date = date.today().strftime('%Y-%m-%d')
-    in_item.vaccination_date = vaccination_date.strftime('%Y-%m-%d')
+	in_item.register_date = date.today().strftime('%Y-%m-%d')
+	in_item.vaccination_date = vaccination_date.strftime('%Y-%m-%d')
 
-    app.patients[in_item.id]=in_item
-    return in_item
+	app.patients[in_item.id]=in_item
+	return in_item
 
 @app.get('/patient/{id}')
 def root(id: int, response: Response):
