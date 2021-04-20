@@ -50,7 +50,7 @@ def root(
 		m.update(password.encode('utf-8'))
 		password_test_hash = str(m.hexdigest()).encode('utf-8')
 
-		if not(password_test_hash == str(password_hash).encode('utf-8')):
+		if (password_test_hash != str(password_hash).encode('utf-8')):
 			raise KeyError
 
 	except:
