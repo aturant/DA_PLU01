@@ -19,6 +19,7 @@ class InItem(BaseModel):
 
 app = FastAPI()
 app.client_id = 0
+app.patients=dict()
 
 
 @app.get("/")
@@ -70,4 +71,19 @@ def root(in_item: InItem):
 
     in_item.register_date = date.today().strftime('%Y-%m-%d')
     in_item.vaccination_date = vaccination_date.strftime('%Y-%m-%d')
+
+    app.patients[in_item.id]=in_item
     return in_item
+
+@app.get('/patient/{id}')
+def root(id: int, response: Response):
+	if id<1:
+		response.status_code=400
+
+	elif id>app.client_id:
+		response.status_code=404
+
+	else:
+		return app.patients[id]
+	
+	return None
