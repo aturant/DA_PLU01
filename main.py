@@ -62,7 +62,7 @@ def root(
 	finally:
 		return None
 
-@app.post('/register')
+@app.post('/register', status_code = 201)
 def root(in_item: InItem):
 
     app.client_id += 1
