@@ -40,8 +40,10 @@ def root(request: Request, response: Response):
 def root(response: Response,
          password: str,
          password_hash: str):
+	
+	response.status_code = 401
 
-    try:
+    if (len(password)+len(password_hash))>0:
 
         m = sha512()
         m.update(password.encode('utf-8'))
@@ -49,11 +51,7 @@ def root(response: Response,
 
         if password_test_hash in str(password_hash).encode('utf-8'):
             response.status_code = 204
-        else:
-            response.status_code = 401
 
-    except NameError:
-        response.status_code = 667
     return {
         "password": password,
         "password_hash": password_hash,
