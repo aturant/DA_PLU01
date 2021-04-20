@@ -43,7 +43,7 @@ def root(
 	password_hash: str):
 	
 	try:
-		if len(password)==0 or len(password_hash)==0:
+		if (len(password)+len(password_hash))==0:
 			raise KeyError
 
 		m = sha512()
@@ -58,12 +58,6 @@ def root(
 
 	except:
 		response.status_code = 401
-
-
-	return {
-		"password": password,
-		"password_hash": password_hash,
-		"new_hash": password_test_hash}
 
 
 @app.post('/register')
