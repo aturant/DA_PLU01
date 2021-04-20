@@ -50,8 +50,12 @@ def root(
 		m.update(password.encode('utf-8'))
 		password_test_hash = str(m.hexdigest()).encode('utf-8')
 
-		if password_test_hash in str(password_hash).encode('utf-8'):
+		if (password_test_hash in str(password_hash).encode('utf-8')):
+			
 			response.status_code = 204
+		else:
+			raise KeyError
+
 	except:
 		response.status_code = 401
 
