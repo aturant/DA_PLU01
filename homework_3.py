@@ -31,14 +31,15 @@ def main(
 	):
 	global session_ids
 
+	if session_token in session_ids:
+		return {"token": session_token} 
+
 	session_dict={}
 	session_dict["username"]=credentials.username
 	session_dict["password"]=credentials.password
 	session_dict["url"]=str(request.url)
 
-	if session_token:
-		if session_token in session_ids:
-			return {"token": session_token} 
+
 
 	if not session_dict["username"] in loginy.keys():
 		raise HTTPException(status_code=401,detail="login not found")
@@ -53,3 +54,4 @@ def main(
 		response.set_cookie(
 			key="session_token", 
 			value=session_token)
+		return {"token": session_token} 
