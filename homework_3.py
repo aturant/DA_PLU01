@@ -36,8 +36,10 @@ def main(
 	session_dict["password"]=credentials.password
 	session_dict["url"]=str(request.url)
 
-	if my_cookie:
-		session_dict["my_cookie"]=my_cookie
+	if !my_cookie:
+		pass
+	elif my_cookie["session_token"] in session_ids:
+		return 
 
 	if not session_dict["username"] in loginy.keys():
 		raise HTTPException(status_code=401,detail="login not found")
