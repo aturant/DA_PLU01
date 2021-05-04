@@ -11,7 +11,7 @@ router = APIRouter()
 # security additions
 security = HTTPBasic()
 loginy={'4dm1n':'NotSoSecurePa$$'}
-session_ids={}
+session_ids=set()
 
 @router.get("/hello", response_class=HTMLResponse)
 def hello():
@@ -27,19 +27,18 @@ def main(
 	response: Response,
 	request:Request,
 	credentials: HTTPBasicCredentials = Depends(security),
-	my_cookie: str = Cookie(None)
+	session_token: str = Cookie(None)
 	):
-
+	global session_ids
 
 	session_dict={}
 	session_dict["username"]=credentials.username
 	session_dict["password"]=credentials.password
 	session_dict["url"]=str(request.url)
 
-	if not(my_cookie):
-		pass
-	elif my_cookie["session_token"] in session_ids:
-		return {"token": my_cookie["session_token"]} 
+	if session_token:
+		if session_token in session_ids:
+			return {"token": session_token} 
 
 	if not session_dict["username"] in loginy.keys():
 		raise HTTPException(status_code=401,detail="login not found")
@@ -47,7 +46,7 @@ def main(
 	elif loginy[session_dict["username"]]!=session_dict["password"]:
 		raise HTTPException(status_code=401,detail="wrong password")
 
-	elif not(my_cookie):
+	else:
 		session_token=1234
 		session_ids.add(session_token)
 		
