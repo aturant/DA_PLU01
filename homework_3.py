@@ -30,7 +30,8 @@ def main(
 	session_token: str = Cookie(None)
 	):
 	global session_ids
-
+	print(session_ids)
+	
 	if session_token in session_ids:
 		return {"token": session_token} 
 
@@ -48,7 +49,7 @@ def main(
 		raise HTTPException(status_code=401,detail="wrong password")
 
 	else:
-		session_token=1234
+		session_token=str(1234)
 		session_ids.add(session_token)
 		
 		response.set_cookie(
