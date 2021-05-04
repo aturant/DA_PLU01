@@ -7,6 +7,7 @@ from pydantic import BaseModel
 import json
 
 from pydantic import BaseModel
+from homework_3 import router
 
 
 class InItem(BaseModel):
@@ -20,6 +21,8 @@ class InItem(BaseModel):
 app = FastAPI()
 app.client_id = 0
 app.patients=dict()
+
+app.include_router(router)
 
 
 @app.get("/")
