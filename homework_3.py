@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Response, Request, HTTPException, Cookie
 from fastapi.responses import HTMLResponse
-from datetime import date
+from datetime import date, datetime
 
 # security imports
 from fastapi import Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import json
 
 router = APIRouter()
 
@@ -49,7 +50,8 @@ def main(
 		raise HTTPException(status_code=401,detail="wrong password")
 
 	else:
-		session_token=str(1234)
+		session_token=str(datetime.now()).replace(" ","")
+
 		session_ids.add(session_token)
 		
 		response.set_cookie(
@@ -72,8 +74,8 @@ def main(
 
 @router.get("/welcome_token")
 def main(
+	format: str="plain", 	
 	token: str=None,
-	format: str=None, 
 	session_token: str = Cookie(None)):
 
 	__mime_dict={
@@ -82,20 +84,37 @@ def main(
 					"html":"text/html"}
 
 	__token=token if token else session_token
-	__format=format if format else "plain"
+	__format=format
 	if __token not in session_ids:
+		__format="plain"
 		raise HTTPException(status_code=401,detail="wrong password")
 
+	if __format not in __mime_dict.keys():
+		raise HTTPException(status_code=401,detail="wrong format")
+
 	if format=="json":
-		message={"message": "Welcome!"}
-	
+		message=json.dumps({"message":"Welcome!"})
+			
 	elif format=="html":
-		message=="<h1>Welcome!</h1>"
+		message="<h1>Welcome!</h1>"
 	
 	else:
 		message="Welcome!"
 
+	print(message)
 	return Response(
-			media_type=__mime_dict[__format],
-			content=message,
+			media_type=str(__mime_dict[__format]),
+			content=str(message),
 			status_code=200)
+
+
+# Skoro coś utworzono, można też to usunąć (tak jak ten opis pracy domowej za pierwszym podejściem - sic!). Dla metody DELETE stwórz najpierw dwa endpointy /logout_session oraz /logout_token. Tak jak w poprzednim zadaniu, należy wpuścić tylko użytkowników z ważnym kluczem sesji. Błędny klucz sesji lub jego brak oznacza zwrotkę kodu HTTP 401. Po poprawnej autentykacji, oba endpointy mają unieważnić klucz sesji poprzez wyczyszczenie pamięci podręcznej aplikacji. Następnie mają przekierować z kodem HTTP 302 (dopuszczalny jest też kod HTTP 303) do endpointu /logged_out, który również należy utworzyć.
+
+# Endpoint /logged_out jest obsługiwany przez metodę GET i w zależności od przekazanego parametru format w adresie url, ma zwrócić kod HTTP 200 oraz odpowiednią wiadomość z odpowiadającym nagłówkiem content-type:
+
+# format=json - należy zwrócić następującą wiadomość w formacie json: {"message": "Logged out!"}
+# format=html - należy zwrócić dowolną wiadomość w formacie html, która ma zawierać następujący fragment: <h1>Logged out!</h1>
+# w pozostałych przypadkach należy zwrócić wiadomość Logged out! w formacie plain
+# Przykładowy request:
+
+# /logout_token?token=verylongvalueXOXOXOXOXO&format=html
