@@ -22,7 +22,7 @@ app = FastAPI()
 app.client_id = 0
 app.patients=dict()
 
-app.include_router(router)
+app.include_router(router, tags=["homework3"])
 
 
 @app.get("/")
