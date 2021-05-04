@@ -39,7 +39,7 @@ def main(
 	if !my_cookie:
 		pass
 	elif my_cookie["session_token"] in session_ids:
-		return 
+		return {"token": my_cookie["session_token"]} 
 
 	if not session_dict["username"] in loginy.keys():
 		raise HTTPException(status_code=401,detail="login not found")
@@ -47,16 +47,10 @@ def main(
 	elif loginy[session_dict["username"]]!=session_dict["password"]:
 		raise HTTPException(status_code=401,detail="wrong password")
 
-	
-		# poprawne logowanie
-	if "login_token" in session_dict:
-		return {"token": my_cookie}
-
-	if "login_session" in session_dict:
+	elif !my_cookie:
 		session_token=1234
 		session_ids.add(session_token)
 		
 		response.set_cookie(
 			key="session_token", 
 			value=session_token)
-		return session_dict
