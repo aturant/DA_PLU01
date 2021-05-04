@@ -36,7 +36,7 @@ def main(
 	session_dict["password"]=credentials.password
 	session_dict["url"]=str(request.url)
 
-	if !my_cookie:
+	if not(my_cookie):
 		pass
 	elif my_cookie["session_token"] in session_ids:
 		return {"token": my_cookie["session_token"]} 
