@@ -66,16 +66,15 @@ def main(
 # - w pozostałych przypadkach należy zwrócić wiadomość Welcome! w formacie plain
 
 
-@router.get("/welcome_session", status_code=200)
+@router.get("/welcome_session")
 
 #/welcome_token?token=verylongvalueXOXOXOXOXO&format=json
 
-@router.get("/welcome_token", status_code=200)
+@router.get("/welcome_token")
 def main(
 	token: str=None,
-	format: str="plain", 
-	session_token: str = Cookie(None),
-	response:Response ):
+	format: str=None, 
+	session_token: str = Cookie(None)):
 
 	__mime_dict={
 					"json":"application/json",
@@ -83,7 +82,7 @@ def main(
 					"html":"text/html"}
 
 	__token=token if token else session_token
-	__format=format
+	__format=format if format else "plain"
 	if __token not in session_ids:
 		raise HTTPException(status_code=401,detail="wrong password")
 
@@ -96,6 +95,7 @@ def main(
 	else:
 		message="Welcome!"
 
-	response.media_type=__mime_dict[__format]
-	response.content=message
-	return message
+	return Response(
+			media_type=__mime_dict[__format],
+			content=message,
+			status_code=200)
