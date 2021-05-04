@@ -47,7 +47,7 @@ def main(
 	elif loginy[session_dict["username"]]!=session_dict["password"]:
 		raise HTTPException(status_code=401,detail="wrong password")
 
-	elif !my_cookie:
+	elif not(my_cookie):
 		session_token=1234
 		session_ids.add(session_token)
 		
