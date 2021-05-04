@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response, Request, HTTPException, Cookie
 from fastapi.responses import HTMLResponse
 from datetime import date, datetime
+from typing import Optional
 
 # security imports
 from fastapi import Depends
@@ -74,37 +75,32 @@ def main(
 
 @router.get("/welcome_token")
 def main(
-	format: str="plain", 	
-	token: str=None,
-	session_token: str = Cookie(None)):
+	format: Optional[str]=None, 	
+	token: Optional[str]=None,
+	session_token: Optional[str] = Cookie(None)):
 
-	__mime_dict={
+	mime_dict={
 					"json":"application/json",
 					"plain":"text/plain",
 					"html":"text/html"}
+	msg_dict={
+					"json":json.dumps({"message":"Welcome!"}),
+					"plain":"Welcome!",
+					"html":"<h1>Welcome!</h1>"}
 
-	__token=token if token else session_token
-	__format=format
-	if __token not in session_ids:
-		__format="plain"
-		raise HTTPException(status_code=401,detail="wrong password")
-
-	if __format not in __mime_dict.keys():
-		raise HTTPException(status_code=401,detail="wrong format")
-
-	if format=="json":
-		message=json.dumps({"message":"Welcome!"})
-			
-	elif format=="html":
-		message="<h1>Welcome!</h1>"
+	session_token=token if token else session_token
 	
-	else:
-		message="Welcome!"
+	print("session_token={}, token={}".format(session_token, token))
 
-	print(message)
+	if session_token not in session_ids:
+		raise HTTPException(status_code=401,
+			detail="wrong password {}".format(session_token))
+
+	format=format if format in mime_dict.keys() else "plain"
+
 	return Response(
-			media_type=str(__mime_dict[__format]),
-			content=str(message),
+			media_type=str(mime_dict[format]),
+			content=msg_dict[format],
 			status_code=200)
 
 
