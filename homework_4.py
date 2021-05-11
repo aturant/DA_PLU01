@@ -48,13 +48,12 @@ def extract_sql_from_endpoint(end_point: str):
 
 def extract_data_from_endpoint(request: Request,
                                QueryParamDict: Optional[Dict] = None,
-                               sql:Optional[str]=None,
-                               end_point:Optional[str]=None):
-
-    end_point=end_point or extract_end_point_from_request(request)
-    sql=sql or extract_sql_from_endpoint(end_point)
-    QueryParamDict=QueryParamDict or dict()
-    print('type(sql): ',type(sql)," sql: ", sql, ", end_point: ", end_point, ", QueryParamDict: ", QueryParamDict)
+                               sql: Optional[str] = None,
+                               end_point: Optional[str] = None):
+    end_point = end_point or extract_end_point_from_request(request)
+    sql = sql or extract_sql_from_endpoint(end_point)
+    QueryParamDict = QueryParamDict or dict()
+    print('type(sql): ', type(sql), " sql: ", sql, ", end_point: ", end_point, ", QueryParamDict: ", QueryParamDict)
 
     rows = router_4.conn.execute(sql, QueryParamDict).fetchall()
 
@@ -129,7 +128,7 @@ router_4.sql_dict["products"] = \
 @router_4.get("/products/{id}")
 def main(id: int, request: Request):
     QryParamDict = {"ProductID": id}
-    sql, end_point, rows = extract_data_from_endpoint(request= request,QueryParamDict= QryParamDict)
+    sql, end_point, rows = extract_data_from_endpoint(request=request, QueryParamDict=QryParamDict)
 
     if not len(rows):
         raise HTTPException(404, "ID does not exist")
@@ -161,14 +160,16 @@ router_4.sql_dict["employees"] = \
 def main(request: Request,
          limit: int,
          offset: int,
-         order: Optional[str]='id'):
-    if order not in {'first_name', 'last_name', 'city','id'}:
+         order: Optional[str] = 'id'):
+    if order not in {'first_name', 'last_name', 'city', 'id'}:
         raise HTTPException(status_code=400, detail='order {} is not recognized'.format(order))
     QryParamDict = {"limit": limit, "offset": offset, "order": order}
-    sql, end_point, rows = extract_data_from_endpoint(request= request,QueryParamDict= QryParamDict)
+    sql, end_point, rows = extract_data_from_endpoint(request=request, QueryParamDict=QryParamDict)
 
     response = {end_point: rows}
     return JSONResponse(response)
+
+
 # 4.4
 # Stwórz endpoint /products_extended, obsługiwany przez metodę GET, ma zwracać kod HTTP 200
 # oraz ma pobierać dane z tabeli Products. Dane mają być posortowane po kolumnie id
@@ -185,13 +186,14 @@ def main(request: Request,
 #   ]
 # }
 # gdzie id to  kolumna ProductID, name to ProductName, category to referencja do tabeli Categories i wartość z kolumny CategoryName, zaś supplier to referencja do tabeli Suppliers i wartość z kolumny CompanyName.
-router_4.sql_dict["products_extended"] =\
+router_4.sql_dict["products_extended"] = \
     "select P.ProductID id, p.ProductName name, c.CategoryName category, " \
     "S.CompanyName supplier " \
     "FROM Products P " \
-    "left join Suppliers S using(SupplierID) " \
-    "left join Categories C using(CategoryID) " \
+    "join Suppliers S using(SupplierID) " \
+    "join Categories C using(CategoryID) " \
     "order by id"
+
 
 @router_4.get("/products_extended", status_code=200)
 def main(request: Request):
@@ -199,19 +201,21 @@ def main(request: Request):
     response = {end_point: rows}
     return JSONResponse(response)
 
+
 # 4.5
 router_4.sql_dict["products_orders"] = "select " \
-                            "o.OrderID id, C.CompanyName customer, od.Quantity quantity, " \
-                            "round( (UnitPrice * Quantity) - Discount * (UnitPrice * Quantity),2) total_price " \
-                            "from Orders O " \
-                            "left join Customers C using(CustomerID) " \
-                            "left join 'Order Details' OD using(OrderID) " \
-                            "where o.OrderID=:OrderID"
+                                       "o.OrderID id, C.CompanyName customer, od.Quantity quantity, " \
+                                       "round( (UnitPrice * Quantity) - Discount * (UnitPrice * Quantity),2) total_price " \
+                                       "from Orders O " \
+                                       "left join Customers C using(CustomerID) " \
+                                       "left join 'Order Details' OD using(OrderID) " \
+                                       "where o.OrderID=:OrderID"
+
 
 @router_4.get("/products/[id]/orders", status_code=200)
 def main(id: int, request: Request):
     sql, end_point, rows = \
-        extract_data_from_endpoint(request=request,QueryParamDict={"OrderID": id},end_point='products_orders')
+        extract_data_from_endpoint(request=request, QueryParamDict={"OrderID": id}, end_point='products_orders')
 
     if not len(rows):
         raise HTTPException(404, "ID does not exist")
