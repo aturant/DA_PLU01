@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse
 
+import json
 import sqlite3
 
 router_4 = APIRouter()
@@ -21,7 +22,7 @@ def make_connection():
         print("connection closed")
     else:
         router_4.conn = sqlite3.connect('northwind.db', check_same_thread=False)
-        router_4.conn.text_factory = lambda b: b.decode(errors="ignore")
+        router_4.conn.text_factory = lambda b: b.decode(errors="ignore").strip()
         router_4.conn.row_factory = dict_factory
         print("connection created")
 
@@ -92,7 +93,8 @@ router_4.sql_dict["customers"] = \
 def main(request: Request):
     sql, end_point = extract_sql_from_endpoint(request)
     rows = router_4.conn.execute(sql).fetchall()
-    return JSONResponse({end_point: rows})
+    response={end_point: rows}
+    return JSONResponse(response)
 
 
 ################################ 4.2
