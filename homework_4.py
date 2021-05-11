@@ -155,8 +155,8 @@ router_4.sql_dict["employees"] = \
     "select " \
     "   EmployeeID id, LastName last_name, FirstName first_name, City city " \
     "from Employees " \
-    "order by :order ASC " \
-    "imit :limit " \
+    "order by :_order ASC " \
+    "limit :limit " \
     "offset :offset ;"
 
 
@@ -166,19 +166,17 @@ def main(request: Request,
          offset: int,
          order: Optional[str] = None):
 
-    __order_dict={
-        "id":"EmployeeID",
-        "last_name":"LastName",
-        "first_name":"FirstName",
-        "city":"City"}
+    # __order_dict={
+    #     "id":"EmployeeID",
+    #     "last_name":"LastName",
+    #     "first_name":"FirstName",
+    #     "city":"City"}
 
     if order not in {'first_name', 'last_name', 'city', None}:
         raise HTTPException(status_code=400, detail='order {} is not recognized'.format(order))
     order=order or 'id'
-    order=__order_dict[order]
-
-
-    QryParamDict = {"limit": limit, "offset": offset, "order": order}
+    # order=__order_dict[order]
+    QryParamDict = {"limit": limit, "offset": offset, "_order": order}
     sql, end_point, rows = extract_data_from_endpoint(request=request, QueryParamDict=QryParamDict)
 
     response = {end_point: rows}
