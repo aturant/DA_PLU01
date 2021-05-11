@@ -158,8 +158,8 @@ router_4.sql_dict["employees"] = \
 
 
 @router_4.get("/employees", status_code=200)
-def main(limit: int, offset: int, order: str, request: Request):
-    if order not in {'first_name', 'last_name', 'city'}:
+def main(limit: int, offset: int, request: Request, order: Optional[str]='id'):
+    if order not in {'first_name', 'last_name', 'city','id'}:
         raise HTTPException(status_code=400, detail='order is not recognized')
     QryParamDict = {"limit": limit, "offset": offset, "order": order}
     sql, end_point, rows = extract_data_from_endpoint(request= request,QueryParamDict= QryParamDict)
