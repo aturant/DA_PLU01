@@ -8,7 +8,7 @@ import json
 
 from pydantic import BaseModel
 from homework_3 import router
-
+from homework_4 import router_4
 
 class InItem(BaseModel):
     id: Optional[int]
@@ -23,7 +23,7 @@ app.client_id = 0
 app.patients=dict()
 
 app.include_router(router, tags=["homework3"])
-
+app.include_router(router_4, tags=["homework4"])
 
 @app.get("/")
 def root():
