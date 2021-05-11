@@ -160,9 +160,20 @@ router_4.sql_dict["employees"] = \
 def main(request: Request,
          limit: int,
          offset: int,
-         order: Optional[str] = 'id'):
-    if order not in {'first_name', 'last_name', 'city', 'id'}:
+         order: Optional[str] = None):
+
+    __order_dict={
+        "id":"EmployeeID",
+        "last_name":"LastName",
+        "first_name":"FirstName",
+        "city":"City"}
+
+    if order not in {'first_name', 'last_name', 'city', None}:
         raise HTTPException(status_code=400, detail='order {} is not recognized'.format(order))
+    order=order or 'id'
+    order=__order_dict[order]
+
+
     QryParamDict = {"limit": limit, "offset": offset, "order": order}
     sql, end_point, rows = extract_data_from_endpoint(request=request, QueryParamDict=QryParamDict)
 
@@ -192,7 +203,7 @@ router_4.sql_dict["products_extended"] = \
     "FROM Products P " \
     "join Suppliers S using(SupplierID) " \
     "join Categories C using(CategoryID) " \
-    "order by id"
+    "order by P.ProductID"
 
 
 @router_4.get("/products_extended", status_code=200)
@@ -210,10 +221,10 @@ router_4.sql_dict["products_orders"] = "select " \
     "join Customers C using(CustomerID) " \
     "join 'Order Details' OD using(OrderID) " \
     "where OD.ProductID=:ProductID " \
-    "order by o.OrderID"
+    "order by o.OrderID ASC"
 
 
-@router_4.get("/products/[id]/orders", status_code=200)
+@router_4.get("/products/{id}/orders", status_code=200)
 def main(id: int, request: Request):
     sql, end_point, rows = \
         extract_data_from_endpoint(request=request,
