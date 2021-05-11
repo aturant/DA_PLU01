@@ -152,8 +152,12 @@ def main(id: int, request: Request):
 # }
 # gdzie id to jest kolumna EmployeeID, last_name to LastName, first_name to FirstName, zaś city to City.
 router_4.sql_dict["employees"] = \
-    "select EmployeeID id, LastName last_name, FirstName first_name, City city " \
-    "from Employees e order by :order ASC limit :limit offset :offset"
+    "select " \
+    "   EmployeeID id, LastName last_name, FirstName first_name, City city " \
+    "from Employees " \
+    "order by :order ASC " \
+    "imit :limit " \
+    "offset :offset ;"
 
 
 @router_4.get("/employees", status_code=200)
