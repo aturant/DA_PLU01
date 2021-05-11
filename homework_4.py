@@ -204,21 +204,24 @@ def main(request: Request):
 
 # 4.5
 router_4.sql_dict["products_orders"] = "select " \
-                                       "o.OrderID id, C.CompanyName customer, od.Quantity quantity, " \
-                                       "round( (UnitPrice * Quantity) - Discount * (UnitPrice * Quantity),2) total_price " \
-                                       "from Orders O " \
-                                       "left join Customers C using(CustomerID) " \
-                                       "left join 'Order Details' OD using(OrderID) " \
-                                       "where o.OrderID=:OrderID"
+    "o.OrderID id, C.CompanyName customer, od.Quantity quantity, " \
+    "round( (od.UnitPrice * od.Quantity) - od.Discount * (od.UnitPrice * od.Quantity),2) total_price " \
+    "from Orders O " \
+    "join Customers C using(CustomerID) " \
+    "join 'Order Details' OD using(OrderID) " \
+    "where OD.ProductID=:ProductID " \
+    "order by o.OrderID"
 
 
 @router_4.get("/products/[id]/orders", status_code=200)
 def main(id: int, request: Request):
     sql, end_point, rows = \
-        extract_data_from_endpoint(request=request, QueryParamDict={"OrderID": id}, end_point='products_orders')
+        extract_data_from_endpoint(request=request,
+                                   QueryParamDict={"ProductID": id},
+                                   end_point='products_orders')
 
     if not len(rows):
         raise HTTPException(404, "ID does not exist")
 
-    response = {end_point: rows}
+    response = {"orders": rows}
     return JSONResponse(response)
