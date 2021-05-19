@@ -10,9 +10,9 @@ from fastapi import Depends
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import json
 
-router = APIRouter()
+router_3 = APIRouter()
 
-router.mime_dict = {
+router_3.mime_dict = {
     "json": "application/json",
     "plain": "text/plain",
     "html": "text/html"}
@@ -22,7 +22,7 @@ security = HTTPBasic()
 loginy = {'4dm1n': 'NotSoSecurePa$$'}
 session_ids = deque({"12334", "4567"},3)
 
-@router.get("/hello", response_class=HTMLResponse)
+@router_3.get("/hello", response_class=HTMLResponse)
 def hello():
     return_string = "<h1>Hello! Today date is {}</h1>".format(date.today().strftime('%Y-%m-%d'))
 
@@ -31,8 +31,8 @@ def hello():
 
 ######################################################################
 
-@router.post("/login_token", status_code=201)
-@router.post("/login_session", status_code=201)
+@router_3.post("/login_token", status_code=201)
+@router_3.post("/login_session", status_code=201)
 def main(
         response: Response,
         request: Request,
@@ -77,9 +77,9 @@ def main(
 # - w pozostałych przypadkach należy zwrócić wiadomość Welcome! w formacie plain
 
 
-@router.get("/welcome_session")
+@router_3.get("/welcome_session")
 # /welcome_token?token=verylongvalueXOXOXOXOXO&format=json
-@router.get("/welcome_token")
+@router_3.get("/welcome_token")
 def main(
         format: Optional[str] = None,
         token: Optional[str] = None,
@@ -97,10 +97,10 @@ def main(
         raise HTTPException(status_code=401,
                             detail="wrong password {}".format(session_token))
 
-    format = format if format in router.mime_dict.keys() else "plain"
+    format = format if format in router_3.mime_dict.keys() else "plain"
 
     return Response(
-        media_type=str(router.mime_dictmime_dict[format]),
+        media_type=str(router_3.mime_dictmime_dict[format]),
         content=msg_dict[format],
         status_code=200)
 
@@ -117,8 +117,8 @@ def main(
 
 # /logout_token?token=verylongvalueXOXOXOXOXO&format=html
 
-@router.delete('/logout_session')
-@router.delete('/logout_token')
+@router_3.delete('/logout_session')
+@router_3.delete('/logout_token')
 def main(
         format: Optional[str] = None,
         token: Optional[str] = None,
@@ -133,7 +133,7 @@ def main(
     return RedirectResponse(url=f'/logged_out?format={format}', status_code=303)
 
 
-@router.get('/logged_out', status_code=200)
+@router_3.get('/logged_out', status_code=200)
 def main(format: Optional[str] = "plain"):
     msg_dict = {
         "json": json.dumps({"message": "Logged out!"}),
@@ -143,7 +143,7 @@ def main(format: Optional[str] = "plain"):
         format = "plain"
 
     return Response(
-        media_type=str(router.mime_dict[format]),
+        media_type=str(router_3.mime_dict[format]),
         content=msg_dict[format],
         status_code=200)
 
